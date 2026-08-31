@@ -23,8 +23,11 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 import { fetchProductByHandle, fetchProducts, formatPrice } from "@/lib/catalog";
+import { AppleLogo } from "@/components/AppleLogo";
+import { APPLE_DISCOUNT, isAppleProduct, useIphone18InCart } from "@/lib/appleDeal";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/product/$handle")({
   component: ProductPage,
