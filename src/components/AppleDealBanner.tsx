@@ -57,7 +57,7 @@ export function AppleDealSection() {
   return (
     <section
       id="apple-20"
-      className="mx-auto mt-6 max-w-7xl scroll-mt-28 px-4 sm:mt-10 sm:px-6"
+      className="mx-auto mt-10 max-w-7xl scroll-mt-28"
     >
       <div className="rounded-3xl border border-[#ff2d55]/45 bg-[#150004] p-5 sm:p-8">
         <div className="flex flex-wrap items-center gap-3">
