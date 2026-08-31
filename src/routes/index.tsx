@@ -159,10 +159,23 @@ function Index() {
                 </p>
               </div>
 
-              <div className="relative flex justify-center">
+              <div className="relative flex items-center justify-center">
                 <div
                   aria-hidden
                   className="absolute inset-0 m-auto h-[320px] w-[320px] rounded-full bg-[#ff0033]/45 blur-[100px]"
+                />
+                {/* anéis sutis ao redor do produto */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 m-auto aspect-square w-[86%] max-w-[420px] rounded-full border border-[#ff2d55]/15"
+                />
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 m-auto aspect-square w-[68%] max-w-[340px] rounded-full border border-[#ff2d55]/25"
+                />
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 m-auto aspect-square w-[50%] max-w-[260px] rounded-full border border-[#ff5470]/20"
                 />
                 <img
                   src={iphone18Image}
