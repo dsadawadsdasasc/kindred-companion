@@ -175,6 +175,31 @@ function ProductPage() {
 
                 <h1 className="mt-4 text-3xl font-bold">{node.title}</h1>
 
+                {appleDealActive && (
+                  <div className="mt-5 overflow-hidden rounded-2xl border border-[#ff2d55]/60 bg-[#1a0007] p-5 shadow-[0_0_30px_rgba(255,0,51,0.25)]">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-[#ff2d55]/60 bg-[#ff0033]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#ff5470]">
+                      <AppleLogo className="h-3.5 w-3.5" />
+                      Combo Apple ativo
+                    </span>
+                    <p className="mt-3 text-sm text-white/80">
+                      Com o <strong className="text-white">iPhone 18 Pro Max</strong> no carrinho,
+                      você garante <strong className="text-[#ff2d55]">20% de desconto</strong> em
+                      todos os produtos Apple.
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-baseline gap-3">
+                      <span className="text-sm text-white/50 line-through">
+                        {formatPrice(priceAmount)}
+                      </span>
+                      <span className="text-3xl font-bold text-[#ff2d55]">
+                        {formatPrice(appleDealPrice)}
+                      </span>
+                      <span className="text-xs text-white/60">
+                        você economiza {formatPrice(priceAmount - appleDealPrice)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 <div className="mt-5 rounded-2xl border border-border bg-card p-5">
                   {compareAt && compareAt > priceAmount && (
                     <p className="text-sm text-muted-foreground">
@@ -193,6 +218,7 @@ function ProductPage() {
                     {formatPrice(pixPrice)} no Pix (8% de desconto)
                   </p>
                 </div>
+
 
                 <div className="mt-6 flex items-center gap-4">
                   <p className="text-sm font-semibold">Quantidade</p>
