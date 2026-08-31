@@ -25,6 +25,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { fetchProductByHandle, fetchProducts, formatPrice } from "@/lib/catalog";
 import { AppleLogo } from "@/components/AppleLogo";
 import { APPLE_DISCOUNT, isAppleProduct, useIphone18InCart } from "@/lib/appleDeal";
+import { AppleDealSection } from "@/components/AppleDealBanner";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 
@@ -283,6 +284,8 @@ function ProductPage() {
                 </div>
               </div>
             </div>
+
+            <AppleDealSection />
 
             {/* Descrição */}
             {node.description && (
