@@ -19,12 +19,20 @@ export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { items, updateQuantity, removeItem, clearCart } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce(
+  const appleDealActive = items.some((i) => i.product.node.handle === IPHONE18_HANDLE);
+  const lineTotal = (item: (typeof items)[number]) => {
+    const base = parseFloat(item.price.amount) * item.quantity;
+    return appleDealActive && isAppleProduct(item.product) ? base * (1 - APPLE_DISCOUNT) : base;
+  };
+  const subtotal = items.reduce(
     (sum, item) => sum + parseFloat(item.price.amount) * item.quantity,
     0,
   );
+  const totalPrice = items.reduce((sum, item) => sum + lineTotal(item), 0);
+  const appleSavings = subtotal - totalPrice;
   const freeShipping = totalPrice >= FREE_SHIPPING_THRESHOLD;
   const missingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - totalPrice);
+
 
   const handleCheckout = () => {
     toast.success("Pedido registrado!", {
