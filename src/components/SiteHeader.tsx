@@ -59,7 +59,7 @@ export function SiteHeader() {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[85vw] sm:max-w-sm">
+            <SheetContent side="right" className="w-[68vw] max-w-[280px] sm:max-w-xs">
               <SheetHeader>
                 <SheetTitle>Categorias</SheetTitle>
               </SheetHeader>
