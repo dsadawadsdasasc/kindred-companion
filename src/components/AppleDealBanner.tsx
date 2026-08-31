@@ -103,7 +103,7 @@ export function AppleDealSection({
               return (
                 <Link
                   key={node.id}
-                  to="/produto/$handle"
+                  to="/product/$handle"
                   params={{ handle: node.handle }}
                   className="group flex flex-col overflow-hidden rounded-2xl border border-[#ff0033]/20 bg-white transition hover:border-[#ff0033]/60"
                 >
