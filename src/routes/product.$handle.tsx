@@ -72,6 +72,7 @@ function ProductPage() {
   const node = product?.node;
   const variant = node?.variants.edges[0]?.node;
   const images = node?.images.edges ?? [];
+  const reviews = getProductReviews(handle, parseFloat(node?.priceRange.minVariantPrice.amount ?? "0"));
   const priceAmount = parseFloat(node?.priceRange.minVariantPrice.amount ?? "0");
   const compareAt = node?.compareAtPrice ? parseFloat(node.compareAtPrice.amount) : null;
   const pixPrice = priceAmount * 0.92;
