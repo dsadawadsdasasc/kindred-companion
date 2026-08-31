@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { ShopifyProduct } from "@/lib/catalog";
+import type { CatalogProduct } from "@/lib/catalog";
 
 export interface CartItem {
   lineId: string | null;
-  product: ShopifyProduct;
+  product: CatalogProduct;
   variantId: string;
   variantTitle: string;
   price: { amount: string; currencyCode: string };

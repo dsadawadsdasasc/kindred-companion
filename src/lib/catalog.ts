@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 /** Product shape used across the UI (kept compatible with the previous catalog adapter). */
-export interface ShopifyProduct {
+export interface CatalogProduct {
   node: {
     id: string;
     title: string;
@@ -47,7 +47,7 @@ export interface ProductRow {
 
 const CURRENCY = "BRL";
 
-export function toProduct(row: ProductRow): ShopifyProduct {
+export function toProduct(row: ProductRow): CatalogProduct {
   const urls = row.image_urls?.length ? row.image_urls : row.image_url ? [row.image_url] : [];
   return {
     node: {
@@ -86,7 +86,7 @@ export function toProduct(row: ProductRow): ShopifyProduct {
 export async function fetchProducts(
   limit = 24,
   categorySlug?: string,
-): Promise<ShopifyProduct[]> {
+): Promise<CatalogProduct[]> {
   let query = supabase
     .from("products")
     .select("*")
@@ -100,7 +100,7 @@ export async function fetchProducts(
   return (data as ProductRow[]).map(toProduct);
 }
 
-export async function searchProducts(term: string, limit = 24): Promise<ShopifyProduct[]> {
+export async function searchProducts(term: string, limit = 24): Promise<CatalogProduct[]> {
   const cleaned = term.trim();
   if (!cleaned) return [];
   const { data, error } = await supabase
@@ -113,7 +113,7 @@ export async function searchProducts(term: string, limit = 24): Promise<ShopifyP
   return (data as ProductRow[]).map(toProduct);
 }
 
-export async function fetchProductByHandle(handle: string): Promise<ShopifyProduct | null> {
+export async function fetchProductByHandle(handle: string): Promise<CatalogProduct | null> {
   const { data, error } = await supabase
     .from("products")
     .select("*")

@@ -2,14 +2,14 @@ import { Link } from "@tanstack/react-router";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
-import { formatPrice, type ShopifyProduct } from "@/lib/catalog";
+import { formatPrice, type CatalogProduct } from "@/lib/catalog";
 import { toast } from "sonner";
 
 export function ProductCard({
   product,
   compact = false,
 }: {
-  product: ShopifyProduct;
+  product: CatalogProduct;
   compact?: boolean;
 }) {
   const addItem = useCartStore((state) => state.addItem);
