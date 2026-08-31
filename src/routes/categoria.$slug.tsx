@@ -224,6 +224,27 @@ function CategoryPage() {
           </p>
         </div>
 
+        {!isPending && androidHighlights.length > 0 && (
+          <section className="mt-8 rounded-3xl border border-primary/40 bg-primary/5 p-5 sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h2 className="text-lg font-bold sm:text-xl">Destaques de R$ 1.500 a R$ 3.000</h2>
+                <p className="text-xs text-muted-foreground sm:text-sm">
+                  Os Androids com melhor custo-benefício da loja.
+                </p>
+              </div>
+              <span className="rounded-full bg-primary px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-primary-foreground">
+                Mais vendidos
+              </span>
+            </div>
+            <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {androidHighlights.map((product) => (
+                <ProductCard key={`hl-${product.node.id}`} product={product} />
+              ))}
+            </div>
+          </section>
+        )}
+
         {isPending ? (
           <div className="flex h-64 items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -242,6 +263,7 @@ function CategoryPage() {
             ))}
           </div>
         )}
+
       </main>
 
       <SiteFooter />
