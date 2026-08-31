@@ -36,7 +36,7 @@ export function SiteFooter() {
         <div>
           <h3 className="text-sm font-semibold">Pagamento</h3>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li>Checkout seguro Shopify</li>
+            <li>Checkout seguro e criptografado</li>
             <li>Cartão, Pix e boleto</li>
             <li>Parcelamento disponível</li>
           </ul>

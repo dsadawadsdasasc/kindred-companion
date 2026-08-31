@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
-import { fetchProductByHandle, fetchProducts, formatPrice } from "@/lib/shopify";
+import { fetchProductByHandle, fetchProducts, formatPrice } from "@/lib/catalog";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 
@@ -50,12 +50,8 @@ export const Route = createFileRoute("/product/$handle")({
 function ProductPage() {
   const { handle } = Route.useParams();
   const addItem = useCartStore((s) => s.addItem);
-  const getCheckoutUrl = useCartStore((s) => s.getCheckoutUrl);
-  const isLoading = useCartStore((s) => s.isLoading);
-  const [variantIndex, setVariantIndex] = useState(0);
   const [imageIndex, setImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [buyingNow, setBuyingNow] = useState(false);
 
   const { data: product, isPending } = useQuery({
     queryKey: ["product", handle],
@@ -68,12 +64,10 @@ function ProductPage() {
   });
 
   const node = product?.node;
-  const variant = node?.variants.edges[variantIndex]?.node;
+  const variant = node?.variants.edges[0]?.node;
   const images = node?.images.edges ?? [];
-  const priceAmount = parseFloat(
-    variant?.price.amount ?? node?.priceRange.minVariantPrice.amount ?? "0",
-  );
-  const currency = variant?.price.currencyCode ?? "BRL";
+  const priceAmount = parseFloat(node?.priceRange.minVariantPrice.amount ?? "0");
+  const compareAt = node?.compareAtPrice ? parseFloat(node.compareAtPrice.amount) : null;
   const pixPrice = priceAmount * 0.92;
   const installment = priceAmount / 10;
   const relatedProducts = (related ?? []).filter((p) => p.node.handle !== handle).slice(0, 8);
@@ -92,22 +86,6 @@ function ProductPage() {
       description: node?.title,
       position: "top-center",
     });
-  };
-
-  const handleBuyNow = async () => {
-    if (!product || !variant) return;
-    setBuyingNow(true);
-    await addItem({
-      product,
-      variantId: variant.id,
-      variantTitle: variant.title,
-      price: variant.price,
-      quantity,
-      selectedOptions: variant.selectedOptions || [],
-    });
-    const url = getCheckoutUrl();
-    if (url) window.open(url, "_blank");
-    setBuyingNow(false);
   };
 
   return (
@@ -157,7 +135,9 @@ function ProductPage() {
                         key={img.node.url}
                         onClick={() => setImageIndex(i)}
                         className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-secondary transition-colors ${
-                          i === imageIndex ? "border-primary" : "border-border hover:border-primary/50"
+                          i === imageIndex
+                            ? "border-primary"
+                            : "border-border hover:border-primary/50"
                         }`}
                       >
                         <img
@@ -174,13 +154,18 @@ function ProductPage() {
               {/* Informações */}
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  {variant?.availableForSale ? (
+                  {node.stock > 0 ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
                       <Check className="h-3 w-3" /> Em estoque
                     </span>
                   ) : (
                     <span className="rounded-full bg-destructive/15 px-3 py-1 text-xs font-semibold text-destructive">
                       Indisponível
+                    </span>
+                  )}
+                  {node.brand && (
+                    <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
+                      {node.brand}
                     </span>
                   )}
                   <span className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
@@ -191,44 +176,23 @@ function ProductPage() {
                 <h1 className="mt-4 text-3xl font-bold">{node.title}</h1>
 
                 <div className="mt-5 rounded-2xl border border-border bg-card p-5">
-                  <p className="text-sm text-muted-foreground">
-                    <span className="line-through">
-                      {formatPrice((priceAmount * 1.15).toFixed(2), currency)}
-                    </span>
-                  </p>
+                  {compareAt && compareAt > priceAmount && (
+                    <p className="text-sm text-muted-foreground">
+                      <span className="line-through">{formatPrice(compareAt)}</span>
+                    </p>
+                  )}
                   <p className="mt-1 text-4xl font-bold text-primary">
-                    {formatPrice(priceAmount.toFixed(2), currency)}
+                    {formatPrice(priceAmount)}
                   </p>
                   <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
                     <CreditCard className="h-4 w-4 text-primary" />
-                    em até <strong>10x de {formatPrice(installment.toFixed(2), currency)}</strong> sem juros
+                    em até <strong>10x de {formatPrice(installment)}</strong> sem juros
                   </p>
                   <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-primary">
                     <Barcode className="h-4 w-4" />
-                    {formatPrice(pixPrice.toFixed(2), currency)} no Pix (8% de desconto)
+                    {formatPrice(pixPrice)} no Pix (8% de desconto)
                   </p>
                 </div>
-
-                {node.variants.edges.length > 1 && (
-                  <div className="mt-6">
-                    <p className="mb-2 text-sm font-semibold">Opções</p>
-                    <div className="flex flex-wrap gap-2">
-                      {node.variants.edges.map((v, i) => (
-                        <button
-                          key={v.node.id}
-                          onClick={() => setVariantIndex(i)}
-                          className={`rounded-full border px-4 py-2 text-sm transition-colors ${
-                            i === variantIndex
-                              ? "border-primary bg-primary text-primary-foreground"
-                              : "border-border text-muted-foreground hover:text-foreground"
-                          }`}
-                        >
-                          {v.node.title}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 <div className="mt-6 flex items-center gap-4">
                   <p className="text-sm font-semibold">Quantidade</p>
@@ -258,38 +222,21 @@ function ProductPage() {
                     size="lg"
                     variant="outline"
                     className="flex-1"
-                    disabled={isLoading || buyingNow || !variant?.availableForSale}
+                    disabled={node.stock === 0}
                     onClick={handleAddToCart}
                   >
-                    {isLoading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <>
-                        <ShoppingCart className="mr-2 h-4 w-4" />
-                        Adicionar ao carrinho
-                      </>
-                    )}
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    Adicionar ao carrinho
                   </Button>
-                  <Button
-                    size="lg"
-                    className="flex-1"
-                    disabled={isLoading || buyingNow || !variant?.availableForSale}
-                    onClick={handleBuyNow}
-                  >
-                    {buyingNow ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <>
-                        <Zap className="mr-2 h-4 w-4" />
-                        Comprar agora
-                      </>
-                    )}
+                  <Button size="lg" className="flex-1" disabled={node.stock === 0} onClick={handleAddToCart}>
+                    <Zap className="mr-2 h-4 w-4" />
+                    Comprar agora
                   </Button>
                 </div>
 
                 <div className="mt-8 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
                   <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-card p-3">
-                    <Truck className="h-4 w-4 text-primary" /> Entrega rápida em todo o Brasil
+                    <Truck className="h-4 w-4 text-primary" /> Frete grátis acima de R$ 2.000
                   </div>
                   <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-card p-3">
                     <ShieldCheck className="h-4 w-4 text-primary" /> Compra 100% segura

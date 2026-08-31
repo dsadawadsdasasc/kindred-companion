@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   Sheet,
   SheetContent,
@@ -9,31 +10,29 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, Truck, CheckCircle2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
-import { formatPrice } from "@/lib/shopify";
+import { formatPrice, FREE_SHIPPING_THRESHOLD } from "@/lib/catalog";
+import { toast } from "sonner";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } =
-    useCartStore();
+  const { items, updateQuantity, removeItem, clearCart } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
     (sum, item) => sum + parseFloat(item.price.amount) * item.quantity,
     0,
   );
-  const currency = items[0]?.price.currencyCode ?? "USD";
-
-  useEffect(() => {
-    if (isOpen) syncCart();
-  }, [isOpen, syncCart]);
+  const freeShipping = totalPrice >= FREE_SHIPPING_THRESHOLD;
+  const missingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - totalPrice);
 
   const handleCheckout = () => {
-    const checkoutUrl = getCheckoutUrl();
-    if (checkoutUrl) {
-      window.open(checkoutUrl, "_blank");
-      setIsOpen(false);
-    }
+    toast.success("Pedido registrado!", {
+      description: `Total ${formatPrice(totalPrice)}${freeShipping ? " com frete grátis" : ""}.`,
+      position: "top-center",
+    });
+    clearCart();
+    setIsOpen(false);
   };
 
   return (
@@ -76,18 +75,13 @@ export const CartDrawer = () => {
                           <img
                             src={item.product.node.images.edges[0].node.url}
                             alt={item.product.node.title}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain p-1"
                           />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium truncate">{item.product.node.title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {item.selectedOptions.map((o) => o.value).join(" • ")}
-                        </p>
-                        <p className="font-semibold">
-                          {formatPrice(item.price.amount, item.price.currencyCode)}
-                        </p>
+                        <p className="font-semibold">{formatPrice(item.price.amount)}</p>
                       </div>
                       <div className="flex flex-col items-end gap-2 flex-shrink-0">
                         <Button
@@ -123,24 +117,29 @@ export const CartDrawer = () => {
                 </div>
               </div>
               <div className="flex-shrink-0 space-y-4 pt-4 border-t bg-background">
+                <div className="rounded-xl border border-border/70 bg-card p-3">
+                  {freeShipping ? (
+                    <p className="flex items-center gap-2 text-sm font-medium text-primary">
+                      <CheckCircle2 className="h-4 w-4" /> Você ganhou frete grátis!
+                    </p>
+                  ) : (
+                    <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Truck className="h-4 w-4 text-primary" />
+                      Faltam <strong>{formatPrice(missingForFreeShipping)}</strong> para frete
+                      grátis
+                    </p>
+                  )}
+                  <Progress
+                    className="mt-2 h-1.5"
+                    value={Math.min(100, (totalPrice / FREE_SHIPPING_THRESHOLD) * 100)}
+                  />
+                </div>
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold">Total</span>
-                  <span className="text-xl font-bold">{formatPrice(totalPrice, currency)}</span>
+                  <span className="text-xl font-bold">{formatPrice(totalPrice)}</span>
                 </div>
-                <Button
-                  onClick={handleCheckout}
-                  className="w-full"
-                  size="lg"
-                  disabled={items.length === 0 || isLoading || isSyncing}
-                >
-                  {isLoading || isSyncing ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Finalizar compra
-                    </>
-                  )}
+                <Button onClick={handleCheckout} className="w-full" size="lg">
+                  Finalizar compra
                 </Button>
               </div>
             </>

@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
-import { fetchProducts } from "@/lib/shopify";
+import { fetchProducts } from "@/lib/catalog";
 import { CATEGORIES } from "@/lib/categories";
 import iphone18Image from "@/assets/iphone18-pro-max.png";
 
-const IPHONE18_HANDLE = "iphone-18-pro-max-1tb-pre-venda";
+const IPHONE18_HANDLE = "iphone-18-pro-max-1tb";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -34,16 +34,16 @@ export const Route = createFileRoute("/")({
 });
 
 const BENEFITS = [
-  { icon: Truck, title: "Entrega expressa", text: "Receba em até 24h nas capitais" },
+  { icon: Truck, title: "Frete grátis", text: "Em compras acima de R$ 2.000" },
   { icon: CreditCard, title: "Parcelamento", text: "Em até 12x no cartão" },
-  { icon: ShieldCheck, title: "Compra segura", text: "Checkout protegido Shopify" },
+  { icon: ShieldCheck, title: "Compra segura", text: "Checkout protegido e criptografado" },
   { icon: Headphones, title: "Suporte premium", text: "Atendimento especializado" },
 ];
 
 function CategoryRow({ category }: { category: (typeof CATEGORIES)[number] }) {
   const { data: products = [], isPending } = useQuery({
     queryKey: ["products", "row", category.slug],
-    queryFn: () => fetchProducts(10, category.query),
+    queryFn: () => fetchProducts(10, category.slug),
   });
 
   if (!isPending && products.length === 0) return null;
@@ -206,7 +206,7 @@ function Index() {
                   tem. Reserve agora — unidades limitadas no primeiro lote.
                 </p>
                 <div className="mt-8 flex flex-wrap items-center gap-4">
-                  <span className="text-3xl font-bold text-white">R$ 22.499,90</span>
+                  <span className="text-3xl font-bold text-white">R$ 19.990,90</span>
                   <Button
                     size="lg"
                     asChild
