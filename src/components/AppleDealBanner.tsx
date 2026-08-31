@@ -7,7 +7,9 @@ import { fetchProducts, formatPrice } from "@/lib/catalog";
 import { APPLE_DISCOUNT, isAppleProduct, useIphone18InCart } from "@/lib/appleDeal";
 
 const scrollToDeals = () => {
-  document.getElementById("apple-20")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const el = document.getElementById("apple-20");
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  else window.location.href = "/#apple-20";
 };
 
 /** Sticky balloon right under the header so mobile users see the 20% deal instantly. */
@@ -16,7 +18,7 @@ export function AppleDealBanner() {
   if (!active) return null;
 
   return (
-    <div className="sticky top-16 z-40 border-b border-[#ff2d55]/40 bg-[#150004]/95 backdrop-blur-md">
+    <div className="border-b border-[#ff2d55]/40 bg-[#150004]/95 backdrop-blur-md">
       <button
         onClick={scrollToDeals}
         className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-2.5 text-left sm:px-6"
