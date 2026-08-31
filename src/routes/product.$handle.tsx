@@ -255,18 +255,20 @@ function ProductPage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="flex-1"
+                    className="h-14 flex-1 text-base"
                     disabled={node.stock === 0}
                     onClick={handleAddToCart}
                   >
-                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    <ShoppingCart className="mr-2 h-5 w-5" />
                     Adicionar ao carrinho
                   </Button>
-                  <Button size="lg" className="flex-1" disabled={node.stock === 0} onClick={handleAddToCart}>
-                    <Zap className="mr-2 h-4 w-4" />
+                  <Button size="lg" className="h-14 flex-1 text-base" disabled={node.stock === 0} onClick={handleAddToCart}>
+                    <Zap className="mr-2 h-5 w-5" />
                     Comprar agora
                   </Button>
                 </div>
+
+                <AppleDealSection unlockWithProductHandle={node.handle} />
 
                 <div className="mt-8 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
                   <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-card p-3">
@@ -285,7 +287,6 @@ function ProductPage() {
               </div>
             </div>
 
-            <AppleDealSection unlockWithProductHandle={node.handle} />
 
             {/* Descrição */}
             {node.description && (
