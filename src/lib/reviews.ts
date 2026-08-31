@@ -11,7 +11,7 @@ function hash(str: string) {
 }
 
 const OVERRIDES: Record<string, { rating: number; count: number }> = {
-  "iphone-18-pro-max": { rating: 5, count: 13 },
+  "iphone-18-pro-max-1tb": { rating: 5, count: 13 },
 };
 
 export function getProductReviews(handle: string, price: number) {
