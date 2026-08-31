@@ -20,7 +20,7 @@ export function ProductCard({
   const image = node.images.edges[0]?.node;
   const price = parseFloat(node.priceRange.minVariantPrice.amount);
   const compareAt = node.compareAtPrice ? parseFloat(node.compareAtPrice.amount) : null;
-  const reviews = getProductReviews(node.handle, price);
+  const reviews = getProductReviews(node.handle, price, node.title);
   const discount = compareAt && compareAt > price ? Math.round((1 - price / compareAt) * 100) : 0;
 
   const handleAddToCart = async () => {
@@ -83,7 +83,7 @@ export function ProductCard({
               {formatPrice(price)}
             </p>
             <p className="text-[11px] text-muted-foreground">
-              10x de {formatPrice(price / 10)} sem juros
+              12x de {formatPrice(price / 12)} sem juros
             </p>
           </div>
           <Button onClick={handleAddToCart} disabled={!variant} className="w-full" size="sm">

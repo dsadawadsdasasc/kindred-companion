@@ -72,11 +72,11 @@ function ProductPage() {
   const node = product?.node;
   const variant = node?.variants.edges[0]?.node;
   const images = node?.images.edges ?? [];
-  const reviews = getProductReviews(handle, parseFloat(node?.priceRange.minVariantPrice.amount ?? "0"));
+  const reviews = getProductReviews(handle, parseFloat(node?.priceRange.minVariantPrice.amount ?? "0"), node?.title ?? handle);
   const priceAmount = parseFloat(node?.priceRange.minVariantPrice.amount ?? "0");
   const compareAt = node?.compareAtPrice ? parseFloat(node.compareAtPrice.amount) : null;
-  const pixPrice = priceAmount * 0.92;
-  const installment = priceAmount / 10;
+  const pixPrice = handle === "iphone-18-pro-max-1tb" ? 18990.9 : priceAmount * 0.92;
+  const installment = priceAmount / 12;
   const relatedProducts = (related ?? []).filter((p) => p.node.handle !== handle).slice(0, 8);
   const iphone18InCart = useIphone18InCart();
   const appleDealActive = iphone18InCart && isAppleProduct(product);
@@ -123,7 +123,7 @@ function ProductPage() {
           </div>
         ) : (
           <>
-            <div className="grid gap-10 lg:grid-cols-2">
+            <div className="grid gap-5 lg:grid-cols-2 lg:gap-10">
               {/* Galeria */}
               <div>
                 <div className="overflow-hidden rounded-3xl border border-border bg-secondary">
@@ -223,11 +223,11 @@ function ProductPage() {
                   </p>
                   <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
                     <CreditCard className="h-4 w-4 text-primary" />
-                    em até <strong>10x de {formatPrice(installment)}</strong> sem juros
+                    em até <strong>12x de {formatPrice(installment)}</strong> sem juros
                   </p>
                   <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-primary">
                     <Barcode className="h-4 w-4" />
-                    {formatPrice(pixPrice)} no Pix (8% de desconto)
+                    {formatPrice(pixPrice)} no Pix ({Math.round((1 - pixPrice / priceAmount) * 100)}% de desconto)
                   </p>
                 </div>
 

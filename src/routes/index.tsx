@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 import { fetchProducts } from "@/lib/catalog";
+import { getProductReviews } from "@/lib/reviews";
 import { CATEGORIES } from "@/lib/categories";
 import { AppleLogo } from "@/components/AppleLogo";
 import { AppleDealSection } from "@/components/AppleDealBanner";
@@ -45,7 +46,25 @@ const BENEFITS = [
 function CategoryRow({ category }: { category: (typeof CATEGORIES)[number] }) {
   const { data: products = [], isPending } = useQuery({
     queryKey: ["products", "row", category.slug],
-    queryFn: () => fetchProducts(10, category.slug),
+    queryFn: async () => {
+      const all = await fetchProducts(40, category.slug);
+      // mostra primeiro os modelos mais populares (não os mais caros)
+      return [...all]
+        .sort(
+          (a, b) =>
+            getProductReviews(
+              b.node.handle,
+              parseFloat(b.node.priceRange.minVariantPrice.amount),
+              b.node.title,
+            ).count -
+            getProductReviews(
+              a.node.handle,
+              parseFloat(a.node.priceRange.minVariantPrice.amount),
+              a.node.title,
+            ).count,
+        )
+        .slice(0, 10);
+    },
   });
 
   if (!isPending && products.length === 0) return null;

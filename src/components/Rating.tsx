@@ -15,7 +15,7 @@ export function Rating({
   const textSize = size === "md" ? "text-sm" : "text-[11px]";
 
   return (
-    <div className={`flex items-center gap-1.5 ${className}`}>
+    <div className={`flex flex-nowrap items-center gap-1.5 whitespace-nowrap ${className}`}>
       <div className="flex items-center gap-0.5">
         {[0, 1, 2, 3, 4].map((i) => (
           <Star
@@ -30,11 +30,11 @@ export function Rating({
           />
         ))}
       </div>
-      <span className={`${textSize} font-semibold text-foreground`}>
+      <span className={`${textSize} shrink-0 font-semibold text-foreground`}>
         {rating.toFixed(1).replace(".", ",")}
       </span>
-      <span className={`${textSize} text-muted-foreground`}>
-        ({count} {count === 1 ? "avaliação" : "avaliações"})
+      <span className={`${textSize} shrink-0 whitespace-nowrap text-muted-foreground`}>
+        ({count}&nbsp;{count === 1 ? "avaliação" : "avaliações"})
       </span>
     </div>
   );
