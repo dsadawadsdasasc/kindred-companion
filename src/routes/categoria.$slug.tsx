@@ -122,11 +122,27 @@ function CategoryPage() {
     if (sort === "menor-preco") sorted.sort((a, b) => priceOf(a) - priceOf(b));
     if (sort === "maior-preco") sorted.sort((a, b) => priceOf(b) - priceOf(a));
     if (sort === "desconto") sorted.sort((a, b) => discountOf(b) - discountOf(a));
+    if (sort === "relevancia" && category.slug === "androids") {
+      const inRange = (p: (typeof products)[number]) => {
+        const price = priceOf(p);
+        return price >= 1500 && price <= 3000;
+      };
+      sorted.sort((a, b) => Number(inRange(b)) - Number(inRange(a)) || priceOf(b) - priceOf(a));
+    }
     return sorted;
-  }, [products, sort, min, max]);
+  }, [products, sort, min, max, category.slug]);
+
+  const androidHighlights = useMemo(() => {
+    if (category.slug !== "androids") return [];
+    return visible.filter((p) => {
+      const price = parseFloat(p.node.priceRange.minVariantPrice.amount);
+      return price >= 1500 && price <= 3000;
+    });
+  }, [visible, category.slug]);
 
   const setSearch = (patch: Partial<CategorySearch>) =>
     navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+
 
   return (
     <div className="min-h-screen bg-background">
