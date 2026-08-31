@@ -1,22 +1,24 @@
 import { Link } from "@tanstack/react-router";
-import { Loader2, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
-import { formatPrice, type ShopifyProduct } from "@/lib/shopify";
+import { formatPrice, type CatalogProduct } from "@/lib/catalog";
 import { toast } from "sonner";
 
 export function ProductCard({
   product,
   compact = false,
 }: {
-  product: ShopifyProduct;
+  product: CatalogProduct;
   compact?: boolean;
 }) {
   const addItem = useCartStore((state) => state.addItem);
-  const isLoading = useCartStore((state) => state.isLoading);
   const node = product.node;
   const variant = node.variants.edges[0]?.node;
   const image = node.images.edges[0]?.node;
+  const price = parseFloat(node.priceRange.minVariantPrice.amount);
+  const compareAt = node.compareAtPrice ? parseFloat(node.compareAtPrice.amount) : null;
+  const discount = compareAt && compareAt > price ? Math.round((1 - price / compareAt) * 100) : 0;
 
   const handleAddToCart = async () => {
     if (!variant) return;
@@ -41,12 +43,17 @@ export function ProductCard({
         params={{ handle: node.handle }}
         className={`relative block overflow-hidden bg-secondary ${compact ? "aspect-[4/3]" : "aspect-square"}`}
       >
+        {discount > 0 && (
+          <span className="absolute left-2 top-2 z-10 rounded-full bg-primary px-2 py-0.5 text-[11px] font-bold text-primary-foreground">
+            -{discount}%
+          </span>
+        )}
         {image ? (
           <img
             src={image.url}
             alt={image.altText ?? node.title}
             loading="lazy"
-            className={`h-full w-full transition-transform duration-500 group-hover:scale-105 ${compact ? "object-contain p-2" : "object-cover"}`}
+            className={`h-full w-full transition-transform duration-500 group-hover:scale-105 ${compact ? "object-contain p-2" : "object-contain p-3"}`}
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
@@ -62,26 +69,22 @@ export function ProductCard({
           <p className="line-clamp-2 text-xs text-muted-foreground">{node.description}</p>
         )}
         <div className={`mt-auto ${compact ? "space-y-2" : "space-y-3"}`}>
-          <p className={`${compact ? "text-base" : "text-lg"} font-bold text-primary`}>
-            {formatPrice(
-              node.priceRange.minVariantPrice.amount,
-              node.priceRange.minVariantPrice.currencyCode,
+          <div>
+            {compareAt && compareAt > price && (
+              <p className="text-xs text-muted-foreground line-through">
+                {formatPrice(compareAt)}
+              </p>
             )}
-          </p>
-          <Button
-            onClick={handleAddToCart}
-            disabled={isLoading || !variant}
-            className="w-full"
-            size="sm"
-          >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <>
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                Adicionar
-              </>
-            )}
+            <p className={`${compact ? "text-base" : "text-lg"} font-bold text-primary`}>
+              {formatPrice(price)}
+            </p>
+            <p className="text-[11px] text-muted-foreground">
+              10x de {formatPrice(price / 10)} sem juros
+            </p>
+          </div>
+          <Button onClick={handleAddToCart} disabled={!variant} className="w-full" size="sm">
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Adicionar
           </Button>
         </div>
       </div>
