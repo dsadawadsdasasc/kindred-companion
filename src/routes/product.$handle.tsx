@@ -28,6 +28,8 @@ import { APPLE_DISCOUNT, isAppleProduct, useIphone18InCart } from "@/lib/appleDe
 import { AppleDealSection } from "@/components/AppleDealBanner";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
+import { Rating } from "@/components/Rating";
+import { getProductReviews } from "@/lib/reviews";
 
 
 export const Route = createFileRoute("/product/$handle")({
@@ -136,8 +138,8 @@ function ProductPage() {
                     </div>
                   )}
                 </div>
-                {images.length > 1 && (
-                  <div className="mt-3 flex gap-2 overflow-x-auto">
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex gap-2 overflow-x-auto">
                     {images.map((img, i) => (
                       <button
                         key={img.node.url}
@@ -156,15 +158,16 @@ function ProductPage() {
                       </button>
                     ))}
                   </div>
-                )}
+                  <Rating rating={reviews.rating} count={reviews.count} size="md" />
+                </div>
               </div>
 
               {/* Informações */}
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   {node.stock > 0 ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
-                      <Check className="h-3 w-3" /> Em estoque
+                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-3 py-1 text-xs font-semibold text-amber-500 ring-1 ring-amber-500/40">
+                      <Check className="h-3 w-3" /> Apenas {node.stock} unidades restantes
                     </span>
                   ) : (
                     <span className="rounded-full bg-destructive/15 px-3 py-1 text-xs font-semibold text-destructive">

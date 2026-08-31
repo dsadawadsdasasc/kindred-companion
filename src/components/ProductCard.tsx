@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice, type CatalogProduct } from "@/lib/catalog";
 import { toast } from "sonner";
+import { Rating } from "@/components/Rating";
+import { getProductReviews } from "@/lib/reviews";
 
 export function ProductCard({
   product,
@@ -18,6 +20,7 @@ export function ProductCard({
   const image = node.images.edges[0]?.node;
   const price = parseFloat(node.priceRange.minVariantPrice.amount);
   const compareAt = node.compareAtPrice ? parseFloat(node.compareAtPrice.amount) : null;
+  const reviews = getProductReviews(node.handle, price);
   const discount = compareAt && compareAt > price ? Math.round((1 - price / compareAt) * 100) : 0;
 
   const handleAddToCart = async () => {
@@ -68,6 +71,7 @@ export function ProductCard({
         {!compact && (
           <p className="line-clamp-2 text-xs text-muted-foreground">{node.description}</p>
         )}
+        <Rating rating={reviews.rating} count={reviews.count} />
         <div className={`mt-auto ${compact ? "space-y-2" : "space-y-3"}`}>
           <div>
             {compareAt && compareAt > price && (
