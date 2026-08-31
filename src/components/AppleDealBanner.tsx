@@ -43,16 +43,25 @@ export function AppleDealBanner() {
 }
 
 /** Section listing every Apple product with the 20% combo price applied. */
-export function AppleDealSection() {
+export function AppleDealSection({
+  unlockWithProductHandle,
+}: {
+  unlockWithProductHandle?: string;
+} = {}) {
   const active = useIphone18InCart();
+  const visible = active || unlockWithProductHandle === "iphone-18-pro-max-1tb";
   const { data: products = [], isPending } = useQuery({
     queryKey: ["products", "apple-deal"],
     queryFn: () => fetchProducts(200),
-    enabled: active,
-    select: (rows) => rows.filter(isAppleProduct),
+    enabled: visible,
+    select: (rows) =>
+      rows.filter(
+        (product) =>
+          isAppleProduct(product) && product.node.handle !== "iphone-18-pro-max-1tb",
+      ),
   });
 
-  if (!active) return null;
+  if (!visible) return null;
 
   return (
     <section
@@ -66,12 +75,13 @@ export function AppleDealSection() {
             Combo Apple · <span className="text-[#ff2d55]">20% OFF</span>
           </h2>
           <span className="rounded-full border border-[#ff2d55]/60 bg-[#ff0033]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#ff5470]">
-            Ativo
+            {active ? "Desconto ativo" : "Oferta exclusiva"}
           </span>
         </div>
         <p className="mt-2 text-sm text-white/70">
-          Com o iPhone 18 Pro Max no carrinho, todos os produtos Apple abaixo saem com 20% de
-          desconto aplicado automaticamente no carrinho.
+          {active
+            ? "Seu iPhone 18 Pro Max já está no carrinho. Todos os produtos Apple abaixo recebem 20% de desconto automaticamente."
+            : "Adicione este iPhone 18 Pro Max ao carrinho e ganhe 20% de desconto nos produtos Apple abaixo."}
         </p>
 
         {isPending ? (
