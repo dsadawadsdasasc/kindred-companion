@@ -7,9 +7,10 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 import { fetchProducts } from "@/lib/catalog";
 import { CATEGORIES } from "@/lib/categories";
+import { AppleLogo } from "@/components/AppleLogo";
+import { IPHONE18_HANDLE } from "@/lib/appleDeal";
 import iphone18Image from "@/assets/iphone18-pro-max.png";
 
-const IPHONE18_HANDLE = "iphone-18-pro-max-1tb";
 
 export const Route = createFileRoute("/")({
   component: Index,
