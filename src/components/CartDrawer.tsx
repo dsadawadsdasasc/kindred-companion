@@ -13,18 +13,28 @@ import {
 import { ShoppingCart, Minus, Plus, Trash2, Truck, CheckCircle2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice, FREE_SHIPPING_THRESHOLD } from "@/lib/catalog";
+import { APPLE_DISCOUNT, IPHONE18_HANDLE, isAppleProduct } from "@/lib/appleDeal";
 import { toast } from "sonner";
+
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { items, updateQuantity, removeItem, clearCart } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce(
+  const appleDealActive = items.some((i) => i.product.node.handle === IPHONE18_HANDLE);
+  const lineTotal = (item: (typeof items)[number]) => {
+    const base = parseFloat(item.price.amount) * item.quantity;
+    return appleDealActive && isAppleProduct(item.product) ? base * (1 - APPLE_DISCOUNT) : base;
+  };
+  const subtotal = items.reduce(
     (sum, item) => sum + parseFloat(item.price.amount) * item.quantity,
     0,
   );
+  const totalPrice = items.reduce((sum, item) => sum + lineTotal(item), 0);
+  const appleSavings = subtotal - totalPrice;
   const freeShipping = totalPrice >= FREE_SHIPPING_THRESHOLD;
   const missingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - totalPrice);
+
 
   const handleCheckout = () => {
     toast.success("Pedido registrado!", {
@@ -134,10 +144,17 @@ export const CartDrawer = () => {
                     value={Math.min(100, (totalPrice / FREE_SHIPPING_THRESHOLD) * 100)}
                   />
                 </div>
+                {appleSavings > 0 && (
+                  <div className="flex items-center justify-between rounded-xl border border-primary/40 bg-primary/10 px-3 py-2 text-sm">
+                    <span className="font-medium text-primary">Desconto Apple 20%</span>
+                    <span className="font-semibold text-primary">-{formatPrice(appleSavings)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold">Total</span>
                   <span className="text-xl font-bold">{formatPrice(totalPrice)}</span>
                 </div>
+
                 <Button onClick={handleCheckout} className="w-full" size="lg">
                   Finalizar compra
                 </Button>
