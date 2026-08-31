@@ -74,6 +74,10 @@ function ProductPage() {
   const pixPrice = priceAmount * 0.92;
   const installment = priceAmount / 10;
   const relatedProducts = (related ?? []).filter((p) => p.node.handle !== handle).slice(0, 8);
+  const iphone18InCart = useIphone18InCart();
+  const appleDealActive = iphone18InCart && isAppleProduct(product);
+  const appleDealPrice = priceAmount * (1 - APPLE_DISCOUNT);
+
 
   const handleAddToCart = async () => {
     if (!product || !variant) return;
