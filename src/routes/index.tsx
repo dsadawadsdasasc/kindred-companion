@@ -8,7 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { fetchProducts } from "@/lib/catalog";
 import { CATEGORIES } from "@/lib/categories";
 import { AppleLogo } from "@/components/AppleLogo";
-import { AppleDealBanner, AppleDealSection } from "@/components/AppleDealBanner";
+import { AppleDealSection } from "@/components/AppleDealBanner";
 import { IPHONE18_HANDLE } from "@/lib/appleDeal";
 import iphone18Image from "@/assets/iphone18-pro-max.png";
 
@@ -84,7 +84,6 @@ function Index() {
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
-      <AppleDealBanner />
 
       <main>
         {/* Frase da loja */}

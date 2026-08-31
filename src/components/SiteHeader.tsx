@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Zap, Search, Menu } from "lucide-react";
 import { CartDrawer } from "@/components/CartDrawer";
+import { AppleDealBanner } from "@/components/AppleDealBanner";
 import { CATEGORIES } from "@/lib/categories";
 import { Button } from "@/components/ui/button";
 import {
@@ -99,6 +100,7 @@ export function SiteHeader() {
           </Sheet>
         </div>
       </div>
+      <AppleDealBanner />
     </header>
   );
 }
