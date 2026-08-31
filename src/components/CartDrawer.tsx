@@ -13,7 +13,9 @@ import {
 import { ShoppingCart, Minus, Plus, Trash2, Truck, CheckCircle2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice, FREE_SHIPPING_THRESHOLD } from "@/lib/catalog";
+import { APPLE_DISCOUNT, IPHONE18_HANDLE, isAppleProduct } from "@/lib/appleDeal";
 import { toast } from "sonner";
+
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
