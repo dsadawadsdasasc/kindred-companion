@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { fetchProducts } from "@/lib/catalog";
 import { CATEGORIES } from "@/lib/categories";
 import { AppleLogo } from "@/components/AppleLogo";
+import { AppleDealSection } from "@/components/AppleDealBanner";
 import { IPHONE18_HANDLE } from "@/lib/appleDeal";
 import iphone18Image from "@/assets/iphone18-pro-max.png";
 
@@ -174,6 +175,8 @@ function Index() {
             </div>
           </div>
         </section>
+
+        <AppleDealSection />
 
         {/* Catálogo por categoria */}
         <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">

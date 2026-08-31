@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Zap, Search, Menu } from "lucide-react";
 import { CartDrawer } from "@/components/CartDrawer";
+import { AppleDealBanner } from "@/components/AppleDealBanner";
 import { CATEGORIES } from "@/lib/categories";
 import { Button } from "@/components/ui/button";
 import {
@@ -59,7 +60,7 @@ export function SiteHeader() {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[85vw] sm:max-w-sm">
+            <SheetContent side="right" className="w-[68vw] max-w-[280px] sm:max-w-xs">
               <SheetHeader>
                 <SheetTitle>Categorias</SheetTitle>
               </SheetHeader>
@@ -99,6 +100,7 @@ export function SiteHeader() {
           </Sheet>
         </div>
       </div>
+      <AppleDealBanner />
     </header>
   );
 }
