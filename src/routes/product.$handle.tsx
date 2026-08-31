@@ -285,7 +285,7 @@ function ProductPage() {
               </div>
             </div>
 
-            <AppleDealSection />
+            <AppleDealSection unlockWithProductHandle={node.handle} />
 
             {/* Descrição */}
             {node.description && (
