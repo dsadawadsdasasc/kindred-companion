@@ -144,10 +144,17 @@ export const CartDrawer = () => {
                     value={Math.min(100, (totalPrice / FREE_SHIPPING_THRESHOLD) * 100)}
                   />
                 </div>
+                {appleSavings > 0 && (
+                  <div className="flex items-center justify-between rounded-xl border border-primary/40 bg-primary/10 px-3 py-2 text-sm">
+                    <span className="font-medium text-primary">Desconto Apple 20%</span>
+                    <span className="font-semibold text-primary">-{formatPrice(appleSavings)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold">Total</span>
                   <span className="text-xl font-bold">{formatPrice(totalPrice)}</span>
                 </div>
+
                 <Button onClick={handleCheckout} className="w-full" size="lg">
                   Finalizar compra
                 </Button>
