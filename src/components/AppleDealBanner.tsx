@@ -1,8 +1,7 @@
+import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowDown, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { AppleLogo } from "@/components/AppleLogo";
-import { ProductCard } from "@/components/ProductCard";
 import { fetchProducts, formatPrice } from "@/lib/catalog";
 import { APPLE_DISCOUNT, isAppleProduct, useIphone18InCart } from "@/lib/appleDeal";
 
@@ -55,10 +54,17 @@ export function AppleDealSection({
     queryFn: () => fetchProducts(200),
     enabled: visible,
     select: (rows) =>
-      rows.filter(
-        (product) =>
-          isAppleProduct(product) && product.node.handle !== "iphone-18-pro-max-1tb",
-      ),
+      rows
+        .filter(
+          (product) =>
+            isAppleProduct(product) && product.node.handle !== "iphone-18-pro-max-1tb",
+        )
+        .sort(
+          (a, b) =>
+            parseFloat(a.node.priceRange.minVariantPrice.amount) -
+            parseFloat(b.node.priceRange.minVariantPrice.amount),
+        )
+        .slice(0, 12),
   });
 
   if (!visible) return null;
@@ -68,17 +74,17 @@ export function AppleDealSection({
       id="apple-20"
       className="mx-auto mt-10 max-w-7xl scroll-mt-28 px-4 sm:px-0"
     >
-      <div className="rounded-3xl border border-[#ff2d55]/45 bg-[#150004] p-5 sm:p-8">
+      <div className="rounded-3xl border-2 border-[#ff0033]/60 bg-white p-5 shadow-[0_10px_40px_-20px_rgba(255,0,51,0.6)] sm:p-8">
         <div className="flex flex-wrap items-center gap-3">
-          <AppleLogo className="h-6 w-6 text-white" />
-          <h2 className="text-xl font-bold text-white sm:text-2xl">
-            Combo Apple · <span className="text-[#ff2d55]">20% OFF</span>
+          <AppleLogo className="h-6 w-6 text-[#111]" />
+          <h2 className="text-xl font-bold text-[#111] sm:text-2xl">
+            Combo Apple · <span className="text-[#ff0033]">20% OFF</span>
           </h2>
-          <span className="rounded-full border border-[#ff2d55]/60 bg-[#ff0033]/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#ff5470]">
+          <span className="rounded-full bg-[#ff0033] px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-white">
             {active ? "Desconto ativo" : "Oferta exclusiva"}
           </span>
         </div>
-        <p className="mt-2 text-sm text-white/70">
+        <p className="mt-2 text-sm text-[#444]">
           {active
             ? "Seu iPhone 18 Pro Max já está no carrinho. Todos os produtos Apple abaixo recebem 20% de desconto automaticamente."
             : "Adicione este iPhone 18 Pro Max ao carrinho e ganhe 20% de desconto nos produtos Apple abaixo."}
@@ -86,30 +92,49 @@ export function AppleDealSection({
 
         {isPending ? (
           <div className="flex h-32 items-center justify-center">
-            <Loader2 className="h-5 w-5 animate-spin text-[#ff2d55]" />
+            <Loader2 className="h-5 w-5 animate-spin text-[#ff0033]" />
           </div>
         ) : (
-          <div className="mt-5 flex gap-4 overflow-x-auto pb-2 [scrollbar-width:thin]">
+          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {products.map((product) => {
-              const price = parseFloat(product.node.priceRange.minVariantPrice.amount);
+              const node = product.node;
+              const price = parseFloat(node.priceRange.minVariantPrice.amount);
+              const image = node.images.edges[0]?.node;
               return (
-                <div key={product.node.id} className="w-44 shrink-0 sm:w-52">
-                  <ProductCard product={product} compact />
-                  <p className="mt-1 px-1 text-xs font-semibold text-[#ff5470]">
-                    No combo: {formatPrice(price * (1 - APPLE_DISCOUNT))}
-                  </p>
-                </div>
+                <Link
+                  key={node.id}
+                  to="/produto/$handle"
+                  params={{ handle: node.handle }}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-[#ff0033]/20 bg-white transition hover:border-[#ff0033]/60"
+                >
+                  <div className="aspect-square bg-[#f6f6f7]">
+                    {image ? (
+                      <img
+                        src={image.url}
+                        alt={image.altText ?? node.title}
+                        loading="lazy"
+                        className="h-full w-full object-contain p-3 transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : null}
+                  </div>
+                  <div className="flex flex-1 flex-col gap-1 p-3">
+                    <h3 className="line-clamp-2 text-xs font-semibold leading-snug text-[#111] sm:text-sm">
+                      {node.title}
+                    </h3>
+                    <div className="mt-auto pt-2">
+                      <p className="text-xs text-[#8a8a8e] line-through decoration-[#ff0033] decoration-2">
+                        {formatPrice(price)}
+                      </p>
+                      <p className="text-base font-extrabold text-[#ff0033] sm:text-lg">
+                        {formatPrice(price * (1 - APPLE_DISCOUNT))}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
               );
             })}
           </div>
         )}
-
-        <Button
-          onClick={scrollToDeals}
-          className="mt-4 hidden border-0 bg-[#ff0033] text-white hover:bg-[#ff2d55]"
-        >
-          Ver produtos
-        </Button>
       </div>
     </section>
   );
